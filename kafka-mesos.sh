@@ -1,4 +1,10 @@
 #!/bin/sh
+
+if [ ! -f ./kafka-mesos.sh ]
+then
+   cd /kafka
+fi
+
 jar='kafka-mesos*.jar'
 
 check_jar() {
