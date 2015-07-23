@@ -1,9 +1,17 @@
 apply plugin: 'scala'
 apply plugin: 'idea'
+apply plugin: 'docker'
 
 version = '0.9.1.4'
 
 jar.archiveName = "kafka-mesos-${version}.jar"
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath('se.transmode.gradle:gradle-docker:1.2')
+    }
+}
 
 repositories {
     mavenCentral()
@@ -57,4 +65,42 @@ jar {
         }
     }
     manifest.attributes("Main-Class": "ly.stealth.mesos.kafka.Cli")
+}
+
+group = System.properties['user.name']
+
+docker {
+    baseImage "ubuntu:14.04"
+    maintainer ""
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = false
+    applicationName = "kafka-mesos"
+
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+    doFirst {
+        copy {
+            from "kafka-mesos.sh"
+            into stageDir
+        }
+    }
+
+    workingDir("/opt/kafka-mesos")
+    setEnvironment("KAFKA_VERSION", "0.8.2.1")
+    setEnvironment("SCALA_VERSION", "2.10")
+
+    runCommand("apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E56151BF && echo deb http://repos.mesosphere.io/ubuntu trusty main > /etc/apt/sources.list.d/mesosphere.list")
+    runCommand("apt-get update && apt-get install -qy git vim zip mc wget curl openjdk-7-jdk mesos libc6")
+
+    runCommand("wget -nc -P /opt/kafka-mesos/ https://archive.apache.org/dist/kafka/\"\$KAFKA_VERSION\"/kafka_\"\$SCALA_VERSION\"-\"\$KAFKA_VERSION\".tgz")
+
+    addFile("*${version}.jar", "/opt/kafka-mesos/")
+    addFile("*.sh", "/opt/kafka-mesos/")
+    exposePort(7000)
 }

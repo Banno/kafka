@@ -1,6 +1,7 @@
 # Intro
-This folder provide a tool for building docker images to be reused later.
-Image fill have following pre-installed components:
+A docker image can be built with gradle.
+
+The image will have following pre-installed components:
 - openjdk-jdk;
 - mesos native libs;
 
@@ -13,14 +14,16 @@ No default configuration file for kafka-mesos is provided. All configuration par
 specified via cli options.
 
 # Building image
-Building docker image is done by `build-image.sh` script. Please refer to help via `./build-image.sh -h`.
+Building docker image is done by the [gradle-docker plugin](https://github.com/Transmode/gradle-docker).
 
 Example:
 ```
-# ./build-image.sh -t <username>/kafka-mesos
+# ./gradlew buildDocker
 ```
 
-Note: `build-image.sh` does not pushes the image. Push should be done manually after testing.
+This builds an image with tag name `<username>/kafka-mesos:<version>`.
+
+Note: this will not push the image. Push should be done manually after testing.
 
 # Running image
 Running image using docker. Required networking params should be provided. Image has no entry point,
@@ -28,7 +31,7 @@ so ./kafka-mesos.sh should be specified explicitly.
 
 Example:
 ```
-# docker run -it -p 7000:7000 --add-host=master:192.168.3.5 <username>/kafka-mesos ./kafka-mesos.sh scheduler \
+# docker run -it -p 7000:7000 --add-host=master:192.168.3.5 <username>/kafka-mesos:<version> ./kafka-mesos.sh scheduler \
 --master=master:5050 --zk=master:2181 --api=http://<accessible-ip>:7000 --storage=zk:/kafka-mesos
 ```
 
@@ -61,7 +64,7 @@ Example:
 }
 ```
 
-Then the cli should be able to connect to url http://master:7000. Example:
+Then the cli should be able to connect to url http://master:7000 from your api client machine (typically different than the mesos slaves). Example:
 ```
 # ./kafka-mesos.sh status --api=http://master:7000
 Cluster status received

@@ -10,8 +10,8 @@ This is a *beta* version. For issues https://github.com/mesos/kafka/issues
 * [Starting and using 1 broker](#starting-and-using-1-broker)
 
 [Typical Operations](#typical-operations)
-* [Run the scheduler with Docker](https://github.com/mesos/kafka/tree/master/src/docker#intro)   
-* [Run the scheduler on Marathon](https://github.com/mesos/kafka/tree/master/src/docker#running-image-in-marathon)  
+* [Run the scheduler with Docker](https://github.com/Banno/kafka/blob/gradle-docker/DOCKER.md)
+* [Run the scheduler on Marathon](https://github.com/Banno/kafka/blob/gradle-docker/DOCKER.md#running-image-in-marathon)
 * [Changing the location of data stored](#changing-the-location-of-data-stored)
 * [Starting 3 brokers](#starting-3-brokers)
 * [High Availability Scheduler State](#high-availability-scheduler-state)
