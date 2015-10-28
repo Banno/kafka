@@ -91,6 +91,20 @@ task buildDocker(type: Docker, dependsOn: build) {
         }
     }
 
+    doFirst {
+        copy {
+            from "kafka-graphite*.jar"
+            into stageDir
+        }
+    }
+
+    doFirst {
+        copy {
+            from "metrics-graphite*.jar"
+            into stageDir
+        }
+    }
+
     workingDir("/opt/kafka-mesos")
     setEnvironment("KAFKA_VERSION", "0.8.2.1")
     setEnvironment("SCALA_VERSION", "2.10")
@@ -99,6 +113,11 @@ task buildDocker(type: Docker, dependsOn: build) {
     runCommand("apt-get update && apt-get install -qy git vim zip mc wget curl openjdk-7-jdk mesos libc6")
 
     runCommand("wget -nc -P /opt/kafka-mesos/ https://archive.apache.org/dist/kafka/\"\$KAFKA_VERSION\"/kafka_\"\$SCALA_VERSION\"-\"\$KAFKA_VERSION\".tgz")
+    runCommand("tar xvf kafka_2.10-0.8.2.1.tgz")
+    addFile("kafka-graphite-1.1.6.jar", "/opt/kafka-mesos/kafka_2.10-0.8.2.1/libs/")
+    addFile("metrics-graphite-2.2.0.jar", "/opt/kafka-mesos/kafka_2.10-0.8.2.1/libs/")
+    runCommand("rm kafka_2.10-0.8.2.1.tgz")
+    runCommand("tar -cvzf kafka_2.10-0.8.2.1.tgz kafka_2.10-0.8.2.1")
 
     addFile("*${version}.jar", "/opt/kafka-mesos/")
     addFile("*.sh", "/opt/kafka-mesos/")
